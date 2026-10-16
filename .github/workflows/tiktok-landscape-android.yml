@@ -1,0 +1,55 @@
+name: TikTok Landscape Android APK
+
+on:
+  push:
+    branches:
+      - feat/add-fullscreen-tiktok-auto-scroll-video
+    paths:
+      - 'android/tiktok-landscape-assistant/**'
+      - '.github/workflows/tiktok-landscape-android.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-and-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: android/tiktok-landscape-assistant
+    steps:
+      - name: Checkout exact commit
+        uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+      - name: Install Android platform
+        run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - name: Run pure Java tests
+        run: sh verification/test-end-detector.sh
+      - name: Assemble installable debug APK
+        run: gradle --no-daemon --stacktrace :app:assembleDebug
+      - name: Verify and checksum APK
+        run: |
+          test -s app/build/outputs/apk/debug/app-debug.apk
+          sha256sum app/build/outputs/apk/debug/app-debug.apk > app/build/outputs/apk/debug/app-debug.apk.sha256
+          cat app/build/outputs/apk/debug/app-debug.apk.sha256
+      - name: Upload APK and checksum
+        uses: actions/upload-artifact@v4
+        with:
+          name: tiktok-landscape-assistant-debug-apk
+          path: |
+            android/tiktok-landscape-assistant/app/build/outputs/apk/debug/app-debug.apk
+            android/tiktok-landscape-assistant/app/build/outputs/apk/debug/app-debug.apk.sha256
+          if-no-files-found: error
+          retention-days: 30
