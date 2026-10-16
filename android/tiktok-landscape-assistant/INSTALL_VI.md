@@ -1,4 +1,4 @@
-> **Cập nhật bảo mật (17/10/2026):** Bản Full v0.1.0-alpha.7 đã bị Google Play Protect chặn khi cài trên thiết bị thật. Nguyên nhân phù hợp với chính sách chặn sideload có Accessibility. **Không tắt Play Protect để cài bản Full.** Xem [SECURITY_INSTALL_VI.md](SECURITY_INSTALL_VI.md). Bản **Brightness Lite v0.2.0-alpha** chỉ điều khiển độ sáng từ Quick Settings và **không có Auto Next**; có thể thử cài nếu Android cho phép. Bản Full v0.2.0-alpha có minh bạch/consent tốt hơn nhưng vẫn có thể bị chặn.
+> **Cập nhật bảo mật (17/10/2026):** Bản Full v0.1.0-alpha.7 đã bị Google Play Protect chặn khi cài trên thiết bị thật. Nguyên nhân phù hợp với chính sách chặn sideload có Accessibility. **Không tắt Play Protect để cài bản Full.** Xem [SECURITY_INSTALL_VI.md](SECURITY_INSTALL_VI.md). Bản **Brightness Lite v0.2.0-alpha** chỉ điều khiển độ sáng từ Quick Settings và **không có Auto Next**; có thể thử cài nếu Android cho phép. Bản Full v0.3.0-alpha có minh bạch/consent tốt hơn nhưng vẫn có thể bị chặn.
 
 # Cài đặt và sử dụng bản thử nghiệm Android
 
@@ -6,7 +6,7 @@
 
 ## A. Cài APK từ GitHub (khuyến nghị, không cần Android Studio)
 
-1. Vào **Releases** của repository → chọn **Pre-release** mới nhất `v0.2.0-alpha.N` nếu đã phát hành. Trong **Assets**, tải đúng file APK muốn thử (`LandscapeBrightnessLite-v0.2.0-alpha.apk` cho bản không có Accessibility hoặc `TikTokLandscapeAssistant-Full-v0.2.0-alpha.apk` cho Full) và `SHA256SUMS.txt`. Không tải `Source code.zip` để cài.
+1. Vào **Releases** của repository → chọn **Pre-release** mới nhất `v0.3.0-alpha.N` nếu đã phát hành. Trong **Assets**, tải đúng file APK muốn thử (`LandscapeBrightnessLite-v0.2.0-alpha.apk` cho bản không có Accessibility hoặc `TikTokLandscapeAssistant-Full-v0.3.0-alpha.apk` cho Full) và `SHA256SUMS.txt`. Không tải `Source code.zip` để cài.
 2. Nếu chưa thấy pre-release, mở **Actions → TikTok Landscape Android APK → một run Success đúng branch → Artifacts → landscape-assistant-full-and-lite-apks**. Tải ZIP artifact và **giải nén để lấy APK**, không cài ZIP.
 3. Tùy chọn: đặt APK và `SHA256SUMS.txt` cạnh nhau trên máy tính, chạy `sha256sum -c SHA256SUMS.txt` để xác minh checksum.
 4. Mở APK Lite trên Android và làm theo cảnh báo cài đặt thông thường. Nếu Play Protect chặn, dừng lại và ghi nhận lỗi; không tắt cơ chế bảo vệ. Bản Full từ GitHub vẫn có thể bị chặn do Accessibility. APK được ký bằng debug key của runner; bản build khác có thể có chữ ký khác nên cần gỡ bản cũ trước khi cài (thiết lập có thể bị xóa).
@@ -45,3 +45,11 @@
 - Android có thực sự khôi phục brightness sau mọi đường thoát không?
 
 App không dùng root, hook, injection hay Internet permission. Không cam kết TikTok sẽ cho phép tự động hóa hoặc không đánh dấu hành vi bên thứ ba.
+
+## E. Kiểm tra Next thực tế (Full v0.3 alpha)
+
+- Mở Full app, đọc thông báo quyền và đồng ý nếu chấp nhận; quyền Accessibility vẫn có thể bị Google Play Protect chặn khi sideload.
+- Cài Full qua Google Play testing path được chấp nhận, sau đó thêm **TikTok Auto Next** và **Next Episode** vào Quick Settings.
+- Sau khi mở TikTok fullscreen ngang, quay về Full app > **Làm mới chẩn đoán**. Xem lại snapshot gần nhất: `Scan`, `Progress available`, `Nút Next Episode`, `Tập / Tổng`, `Hành động`.
+- Không tìm thấy progress/nút Next -> không thể kết luận Auto Next hoạt động. Giữ timer 0 và swipe OFF.
+- Xem [E2E_TEST_VI.md](E2E_TEST_VI.md) để kiểm tra 1→2, 2→3, tập cuối và khôi phục brightness. **Không được tắt Play Protect để ép cài Full.**
