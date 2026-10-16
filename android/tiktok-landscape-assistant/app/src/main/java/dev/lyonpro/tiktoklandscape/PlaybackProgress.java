@@ -14,9 +14,9 @@ public final class PlaybackProgress {
         String[] parts=value.split(":");
         if(parts.length!=2 && parts.length!=3)return -1;
         int total=0;
-        for(String part:parts) {
-            int n=Integer.parseInt(part);
-            if(n>=60 && part!=parts[0]) return -1;
+        for(int i=0;i<parts.length;i++) {
+            int n=Integer.parseInt(parts[i]);
+            if(i>0 && n>=60) return -1;
             total=total*60+n;
         }
         return total;
