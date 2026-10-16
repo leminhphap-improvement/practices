@@ -15,7 +15,7 @@ Tài liệu chính thức:
 ## Hai bản build khác nhau
 
 1. **LandscapeBrightnessLite-v0.2.0-alpha.apk** — chỉ có nút Quick Settings bật/tắt độ sáng 100%, tự lưu/khôi phục mức sáng khi tắt. Không có Accessibility Service, không đọc TikTok, không có Auto Next, không tự nhận biết landscape. Xin quyền **Modify system settings** bằng giao diện Android chính thức. Có thể cài thử theo quy trình sideload chuẩn; **chưa kiểm chứng Play Protect trên điện thoại thực**.
-2. **TikTokLandscapeAssistant-Full-v0.2.0-alpha.apk** — giữ Auto Next thử nghiệm, yêu cầu Accessibility. Thêm khai báo minh bạch trong app, affirmative consent, lọc sự kiện TikTok. **Vẫn có thể bị Play Protect chặn khi sideload**. Không đánh tráo bản Lite thành bản Auto Next.
+2. **TikTokLandscapeAssistant-Full-v0.3.0-alpha.apk** — giữ Auto Next thử nghiệm, yêu cầu Accessibility. Thêm khai báo minh bạch trong app, affirmative consent, lọc sự kiện TikTok. **Vẫn có thể bị Play Protect chặn khi sideload**. Không đánh tráo bản Lite thành bản Auto Next.
 
 ## Cài bản Lite (trên Android nếu Play Protect cho phép)
 1. Tải từ Release GitHub chính thức của repository, chọn đúng `LandscapeBrightnessLite-v0.2.0-alpha.apk`; đối chiếu `SHA256SUMS.txt` nếu có thể.
@@ -29,3 +29,6 @@ Tài liệu chính thức:
 - Việc được build, ký release, hay có GitHub Release **không đồng nghĩa** được Google Play chấp thuận hoặc không bị Play Protect chặn.
 - Người dùng tự quyết định các bước cấp quyền nhạy cảm; không yêu cầu gửi mật khẩu, OTP hoặc dữ liệu TikTok.
 - Tính năng chuyển đúng tập tiếp theo và dừng tập cuối **chưa kiểm thử end-to-end** trên TikTok thực tế.
+
+## v0.3.0 pending validation
+Full now has a manual Next Episode Quick Settings tile, episode counter guard and local diagnostic snapshot. These source features do **not** change Google's sensitive-permission sideload classification. Refer to E2E_TEST_VI.md and PLAY_CONSOLE_HANDOFF_VI.md.
