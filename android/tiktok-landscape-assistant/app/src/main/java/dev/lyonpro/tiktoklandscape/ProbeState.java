@@ -52,12 +52,12 @@ final class ProbeState {
         if (timestamp==0) return "Chưa quét được player TikTok ngang.";
         StringBuilder s=new StringBuilder();
         s.append("Scan: ").append(p.getString(KEY_STATUS,"unknown"));
-        s.append("\nProgress RangeInfo: ").append(p.getBoolean(KEY_PROGRESS,false)?"YES":"NO");
+        s.append("\nProgress available: ").append(p.getBoolean(KEY_PROGRESS,false)?"YES":"NO");
         s.append("\nNút Next Episode: ").append(p.getBoolean(KEY_NEXT,false)?"YES":"NO");
         s.append("\nTập / Tổng: ").append(p.getString(KEY_COUNTER,"unknown"));
         s.append("\nHành động: ").append(p.getString(KEY_ACTION,"none"));
         s.append("\nThời điểm: ").append(new java.text.SimpleDateFormat("HH:mm:ss dd/MM",java.util.Locale.getDefault()).format(new java.util.Date(timestamp)));
-        s.append("\\nRời player: ").append(p.getString("probe_exit","unknown"));
+        s.append("\nRời player: ").append(p.getString("probe_exit","unknown"));
         return s.toString();
     }
 }
