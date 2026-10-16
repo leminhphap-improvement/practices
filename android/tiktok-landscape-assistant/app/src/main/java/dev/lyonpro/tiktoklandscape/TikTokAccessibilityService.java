@@ -34,6 +34,7 @@ public final class TikTokAccessibilityService extends AccessibilityService {
 
     private static final class Scan {
         Float progress;
+        boolean textProgress;
         AccessibilityNodeInfo next;
         AccessibilityNodeInfo pause;
         EpisodeCounter episode;
@@ -120,7 +121,7 @@ public final class TikTokAccessibilityService extends AccessibilityService {
                 startedAt=now;attemptNext(scan,now,"timer");
             }
         }
-        String status=scan.progress!=null?"PROGRESS_VISIBLE":"PROGRESS_NOT_EXPOSED";
+        String status=scan.progress!=null?(scan.textProgress?"TIME_LABEL_VISIBLE":"PROGRESS_RANGE_VISIBLE"):"PROGRESS_NOT_EXPOSED";
         if (scan.counterConflict) status="EPISODE_COUNTER_AMBIGUOUS";
         ProbeState.record(this,status,scan.progress!=null,scan.next!=null,scan.episode,lastAction);
     }
@@ -163,6 +164,17 @@ public final class TikTokAccessibilityService extends AccessibilityService {
                 }
                 CharSequence t=node.getText(), c=node.getContentDescription();
                 String label=(String.valueOf(t)+" "+String.valueOf(c)).toLowerCase(Locale.ROOT);
+                if (out.progress==null) {
+                    String id=String.valueOf(node.getViewIdResourceName()).toLowerCase(Locale.ROOT);
+                    String desc=String.valueOf(c).toLowerCase(Locale.ROOT);
+                    boolean playerContext=id.contains("progress")||id.contains("seek")||
+                            id.contains("duration")||id.contains("play_time")||
+                            desc.contains("video progress")||desc.contains("thời lượng video");
+                    if(playerContext) {
+                        Float fromText=PlaybackProgress.fromVisibleLabel(label);
+                        if (fromText!=null) { out.progress=fromText;out.textProgress=true; }
+                    }
+                }
                 if (out.next==null && nextLabel(label)) out.next=node;
                 if (out.pause==null && pauseLabel(label.trim())) out.pause=node;
                 EpisodeCounter candidate=EpisodeCounter.parse(label);
