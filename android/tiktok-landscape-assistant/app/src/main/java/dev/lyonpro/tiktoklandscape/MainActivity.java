@@ -36,8 +36,16 @@ public final class MainActivity extends Activity {
 
         header("TikTok Landscape Assistant");
         label("Chỉ hoạt động khi bật và TikTok ở màn hình ngang. Không đặt floating overlay lên video.");
+        label("THÔNG BÁO QUYỀN NHẠY CẢM: Khi được bật, Accessibility Service có thể đọc nội dung điều khiển hiện trên TikTok (bao gồm tiến trình video, văn bản và nhãn nút) và thực hiện thao tác chạm/vuốt để thử chuyển tập. Android cấp quyền Accessibility rộng; hãy chỉ cho phép nếu bạn tin tưởng source. App không thu thập, lưu hay gửi nội dung đọc được lên mạng, không ghi màn hình. Quyền Modify system settings dùng để tăng và khôi phục độ sáng, độc lập với Accessibility. Bạn có thể tắt Auto Next hoặc thu hồi Accessibility bất cứ lúc nào.");
+        check("Tôi đã đọc và đồng ý cho app dùng Accessibility để điều khiển TikTok khi màn hình ngang",Prefs.CONSENT,false);
         state=label("");
-        button("1. Cấp quyền Accessibility",v->startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)));
+        button("1. Cấp quyền Accessibility",v->{
+            if (!Prefs.consented(this)) {
+                android.widget.Toast.makeText(this,"Đọc thông báo và tích đồng ý trước khi cấp Accessibility",android.widget.Toast.LENGTH_LONG).show();
+                return;
+            }
+            startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+        });
         button("2. Cho phép thay đổi độ sáng",v->{
             Intent i=new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS,Uri.parse("package:"+getPackageName()));
             startActivity(i);
@@ -76,9 +84,15 @@ public final class MainActivity extends Activity {
     }
     private void check(String text,String key,boolean fallback) {
         CheckBox cb=new CheckBox(this);cb.setText(text);
-        cb.setChecked(Prefs.get(this).getBoolean(key,fallback));
+        cb.setChecked(key.equals(Prefs.ENABLED)?Prefs.enabled(this):Prefs.get(this).getBoolean(key,fallback));
         cb.setOnCheckedChangeListener((button, checked)->{
+            if (key.equals(Prefs.ENABLED) && checked && !Prefs.consented(this)) {
+                cb.setChecked(false);
+                android.widget.Toast.makeText(this,"Cần đồng ý thông báo Accessibility trước khi bật Auto Next",android.widget.Toast.LENGTH_LONG).show();
+                return;
+            }
             Prefs.get(this).edit().putBoolean(key,checked).apply();
+            if (key.equals(Prefs.CONSENT) && !checked) Prefs.enabled(this,false);
             if (key.equals(Prefs.ENABLED))Prefs.enabled(this,checked);
             if (!Prefs.enabled(this)||key.equals(Prefs.BRIGHTNESS)&&!checked)brightness.impl.restore();
             TikTokAccessibilityService svc=TikTokAccessibilityService.current();if(svc!=null)svc.refresh();
