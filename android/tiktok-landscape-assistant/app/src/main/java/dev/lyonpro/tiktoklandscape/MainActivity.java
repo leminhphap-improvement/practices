@@ -19,6 +19,7 @@ import android.widget.TextView;
 public final class MainActivity extends Activity {
     private LinearLayout root;
     private TextView state;
+    private TextView probe;
     private EditText timer;
     private final BrightnessControllerHolder brightness=new BrightnessControllerHolder();
     private static class BrightnessControllerHolder { BrightnessController impl; }
@@ -39,6 +40,9 @@ public final class MainActivity extends Activity {
         label("THÔNG BÁO QUYỀN NHẠY CẢM: Khi được bật, Accessibility Service có thể đọc nội dung điều khiển hiện trên TikTok (bao gồm tiến trình video, văn bản và nhãn nút) và thực hiện thao tác chạm/vuốt để thử chuyển tập. Android cấp quyền Accessibility rộng; hãy chỉ cho phép nếu bạn tin tưởng source. App không thu thập, lưu hay gửi nội dung đọc được lên mạng, không ghi màn hình. Quyền Modify system settings dùng để tăng và khôi phục độ sáng, độc lập với Accessibility. Bạn có thể tắt Auto Next hoặc thu hồi Accessibility bất cứ lúc nào.");
         check("Tôi đã đọc và đồng ý cho app dùng Accessibility để điều khiển TikTok khi màn hình ngang",Prefs.CONSENT,false);
         state=label("");
+        label("KẾT QUẢ KIỂM TRA PLAYER (chỉ trạng thái kỹ thuật; không lưu chữ trên TikTok, thông tin cá nhân hay ảnh):");
+        probe=label("");
+        button("Làm mới chẩn đoán",v->status());
         button("1. Cấp quyền Accessibility",v->{
             if (!Prefs.consented(this)) {
                 android.widget.Toast.makeText(this,"Đọc thông báo và tích đồng ý trước khi cấp Accessibility",android.widget.Toast.LENGTH_LONG).show();
@@ -69,8 +73,8 @@ public final class MainActivity extends Activity {
             status();
         });
         button("Khôi phục độ sáng ban đầu",v->{brightness.impl.restore();status();});
-        label("Mở Quick Settings > Chỉnh sửa > kéo ô 'TikTok Auto Next' vào danh sách. Chạm ô này để bật/tắt không cần overlay.");
-        label("Tự qua tập chỉ hoạt động khi TikTok expose thanh tiến trình hoặc khi bật timer. App thử nút Next trước, rồi mới vuốt nếu bạn cho phép. Không thể bảo đảm nhận biết tập cuối hay TikTok không hạn chế automation.");
+        label("Mở Quick Settings > Chỉnh sửa > thêm 2 tile: 'TikTok Auto Next' (bật/tắt) và 'Next Episode' (chuyển tập thủ công). Sau khi chạm Next Episode, đóng thanh Quick Settings trong 10 giây để TikTok hiển thị trở lại.");
+        label("Auto Next chỉ chạy khi có progress hoặc timer được chủ động bật. Nếu TikTok hiển thị 'Tập X/Y', app chặn chuyển khi X=Y và thử Pause. Không có counter thì không thể chắc chắn đâu là tập cuối. Nếu không tìm thấy Next, app không tự vuốt trừ khi bạn bật fallback.");
     }
     private void header(String text) {
         TextView t=label(text);t.setTextSize(22);t.setPadding(0,0,0,16);
@@ -106,6 +110,7 @@ public final class MainActivity extends Activity {
         state.setText("Auto Next: "+(Prefs.enabled(this)?"ON":"OFF")+
                 " | Accessibility: "+(accessibilityEnabled()?"đã bật":"chưa bật")+
                 " | Modify brightness: "+(brightness.impl.canWrite()?"đã cấp":"chưa cấp"));
+        if (probe!=null) probe.setText(ProbeState.summary(this));
     }
     private boolean accessibilityEnabled() {
         String enabled=Settings.Secure.getString(getContentResolver(),Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
