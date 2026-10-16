@@ -1,6 +1,6 @@
 > **Installation warning (October 2026):** Google Play Protect blocked the previous Full APK on an Android device because internet-sideloaded apps with Accessibility permission may be classified as high risk. The app cannot safely sidestep Play Protect. See [SECURITY_INSTALL_VI.md](SECURITY_INSTALL_VI.md) for a least-privilege **Brightness Lite** APK and official options for distributing the Full app. Lite **does not include Auto Next**.
 
-# TikTok Landscape Assistant (Android, alpha)
+# Landscape Episode Assistant (Android v0.3.0 experimental)
 
 **Goal:** keep TikTok's own fullscreen landscape player unobstructed, automatically advance when the video loops, and temporarily maximize screen brightness. Portrait TikTok remains untouched.
 
@@ -18,16 +18,27 @@ This is an **experimental Android project**. GitHub Actions builds an installabl
 
 **Not implemented:** real-time adjustable seek bar / episode list from TikTok; guaranteed detection of last episode; verified TikTok behavior on a physical device. These require first proving TikTok exposes relevant controls in landscape. No TikTok bypass or anti-detection scheme.
 
+## Full v0.3.0 experimental capabilities
+
+- Local-only diagnostics preserve the latest landscape player scan after switching back to app settings.
+- Separate user-triggered `Next Episode` Quick Settings tile; close the shade within 10 seconds for the queued action.
+- Bounded detection of explicit episode counters like `Tập 3/12`; prevents Next when `3/3` is observed and tries visible Pause at series end.
+- Recognises an accessible player `RangeInfo` or explicitly labeled playback `00:30 / 02:00` text.
+- Safe default: timer 0, generic fallback swipe OFF; does nothing if TikTok exposes no usable controls.
+- The Full APK is still subject to Google Play Protect Accessibility restrictions and is **not E2E validated** on a real TikTok session.
+
+Documentation: [E2E_TEST_VI.md](E2E_TEST_VI.md) · [PLAY_CONSOLE_HANDOFF_VI.md](PLAY_CONSOLE_HANDOFF_VI.md) · [PRIVACY_POLICY.md](PRIVACY_POLICY.md).
+
 ## Release variants
 
 - `LandscapeBrightnessLite-v0.2.0-alpha.apk`: user-initiated brightness-only Quick Settings tile. No AccessibilityService, TikTok screen access, automatic landscape detection, or Auto Next.
-- `TikTokLandscapeAssistant-Full-v0.2.0-alpha.apk`: the original experimental landscape Auto Next; declares sensitive Accessibility API, now explicitly disclosed/consented and scoped to TikTok packages. Play Protect **may still block sideload installs**. Official review/appeal, not protection bypass, is the correct path.
+- `TikTokLandscapeAssistant-Full-v0.3.0-alpha.apk`: the original experimental landscape Auto Next; declares sensitive Accessibility API, now explicitly disclosed/consented and scoped to TikTok packages. Play Protect **may still block sideload installs**. Official review/appeal, not protection bypass, is the correct path.
 - Release assets include `SHA256SUMS.txt` for both APKs.
 
 ## Download APK from GitHub CI / pre-release
 
 1. See [INSTALL_VI.md](INSTALL_VI.md) for Android permissions and usage.
-2. GitHub **Releases** has pre-release APKs only after a successful explicit `release(android):` commit on this branch. Download the **chosen variant** (`LandscapeBrightnessLite-v0.2.0-alpha.apk` or `TikTokLandscapeAssistant-Full-v0.2.0-alpha.apk`) plus `SHA256SUMS.txt` from the same release and verify checksum if possible.
+2. GitHub **Releases** has pre-release APKs only after a successful explicit `release(android):` commit on this branch. Download the **chosen variant** (`LandscapeBrightnessLite-v0.2.0-alpha.apk` or `TikTokLandscapeAssistant-Full-v0.3.0-alpha.apk`) plus `SHA256SUMS.txt` from the same release and verify checksum if possible.
 3. If the pre-release has not been published, go to **Actions → TikTok Landscape Android APK → a successful run for this branch → Artifacts → tiktok-landscape-assistant-debug-apk**. The artifact ZIP contains the APK and checksum.
 4. Each CI APK uses a runner-generated debug signing key: installing a different build over an older one may require uninstalling the older version first.
 
@@ -55,3 +66,5 @@ Run pure-Java decision tests: `sh verification/test-end-detector.sh`. GitHub CI 
 ## CI provenance
 
 Workflow: `.github/workflows/tiktok-landscape-android.yml` on the feature branch. It uses JDK 17, Gradle 8.9, Android SDK 35, pure-Java loop detection tests, `assembleDebug`, APK integrity/checksum, and upload-artifact. For status readback it publishes the exact commit SHA in GitHub commit statuses. CI is allowed for this repository; quota limits from unrelated GitHub organizations must not be assumed here.
+
+**Google Play owner artifact:** CI additionally emits `TikTokLandscapeAssistant-Full-v0.3.0-alpha-unsigned.aab`, which is NOT installable and must be signed by the account owner before track upload. GitHub release assets do not imply Play approval.
