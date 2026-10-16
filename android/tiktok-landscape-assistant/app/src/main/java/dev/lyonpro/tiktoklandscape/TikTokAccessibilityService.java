@@ -129,7 +129,7 @@ public final class TikTokAccessibilityService extends AccessibilityService {
     private void leave(String reason) {
         firstMissing=0;activePackage="";startedAt=0;detector.reset();
         if (brightness!=null) brightness.restore();
-        ProbeState.record(this,reason,false,false,null,lastAction);
+        ProbeState.markInactive(this,reason);
     }
 
     private static boolean progressLabel(AccessibilityNodeInfo node) {
