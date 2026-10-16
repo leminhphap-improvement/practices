@@ -2,7 +2,7 @@
 
 **Goal:** keep TikTok's own fullscreen landscape player unobstructed, automatically advance when the video loops, and temporarily maximize screen brightness. Portrait TikTok remains untouched.
 
-This is an **experimental Android source project**, NOT a validated release APK. TikTok's player may not expose its progress and next-episode actions to Accessibility; behavior varies by version, region, video type and device. There is no publicly supported TikTok episode-control API used here. **End of series cannot be determined reliably by generic swiping.** TikTok may restrict third-party automation; no promise of non-detection is made.
+This is an **experimental Android project**. GitHub Actions builds an installable debug-signed APK; pre-releases are for personal testing only and are **NOT validated on a physical TikTok landscape player**. TikTok's player may not expose its progress and next-episode actions to Accessibility; behavior varies by version, region, video type and device. There is no publicly supported TikTok episode-control API used here. **End of series cannot be determined reliably by generic swiping.** TikTok may restrict third-party automation; no promise of non-detection is made.
 
 ## Features implemented in source
 
@@ -14,9 +14,16 @@ This is an **experimental Android source project**, NOT a validated release APK.
 - Brightness 255/255 for enabled landscape TikTok, after WRITE_SETTINGS permission; saves previous brightness level and auto/manual mode and restores when leaving, turning off, or destroying the service.
 - Settings UI is separate from TikTok. No recording, remote API, injection, or root.
 
-**Not implemented:** real-time adjustable seek bar / episode list from TikTok; guaranteed detection of last episode; installation APK; verified TikTok behavior on a physical device. These require first proving TikTok exposes relevant controls in landscape. No TikTok bypass or anti-detection scheme.
+**Not implemented:** real-time adjustable seek bar / episode list from TikTok; guaranteed detection of last episode; verified TikTok behavior on a physical device. These require first proving TikTok exposes relevant controls in landscape. No TikTok bypass or anti-detection scheme.
 
-## Build (requires network for first-time Android dependencies)
+## Download APK from GitHub CI / pre-release
+
+1. See [INSTALL_VI.md](INSTALL_VI.md) for Android permissions and usage.
+2. GitHub **Releases** has pre-release APKs only after a successful explicit `release(android):` commit on this branch. Download `TikTokLandscapeAssistant-v0.1.0-alpha.apk` plus `SHA256SUMS.txt` from the same release and verify checksum if possible.
+3. If the pre-release has not been published, go to **Actions → TikTok Landscape Android APK → a successful run for this branch → Artifacts → tiktok-landscape-assistant-debug-apk**. The artifact ZIP contains the APK and checksum.
+4. Each CI APK uses a runner-generated debug signing key: installing a different build over an older one may require uninstalling the older version first.
+
+## Build locally (requires network for first-time Android dependencies)
 
 Prerequisites: Android Studio (Android Gradle Plugin 8.6.1), JDK 17, Android SDK 35, Android device API 26+.
 
@@ -35,4 +42,8 @@ Accessibility is a sensitive, user-granted Android permission. This app may read
 
 ## Validation
 
-Run pure-Java decision tests: `sh verification/test-end-detector.sh`. Full Android build, signed APK and on-device acceptance remain unverified until Android SDK/Gradle and physical TikTok playback are available.
+Run pure-Java decision tests: `sh verification/test-end-detector.sh`. GitHub CI verifies source tests, Android build, debug signing and artifact checksums on its exact commit. These build checks **do not validate playback/auto-next behavior on a physical TikTok device**.
+
+## CI provenance
+
+Workflow: `.github/workflows/tiktok-landscape-android.yml` on the feature branch. It uses JDK 17, Gradle 8.9, Android SDK 35, pure-Java loop detection tests, `assembleDebug`, APK integrity/checksum, and upload-artifact. For status readback it publishes the exact commit SHA in GitHub commit statuses. CI is allowed for this repository; quota limits from unrelated GitHub organizations must not be assumed here.
