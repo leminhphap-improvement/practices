@@ -44,23 +44,34 @@ jobs:
           test -x "$ANDROID_HOME/build-tools/35.0.0/aapt"
       - name: Run pure Java logic tests
         run: sh verification/test-end-detector.sh
-      - name: Assemble installable debug APK
-        run: gradle --no-daemon --stacktrace :app:assembleDebug
+      - name: Assemble Auto Next and Brightness Lite debug APKs
+        run: gradle --no-daemon --stacktrace :app:assembleDebug :lite:assembleDebug
       - name: Verify and checksum APK
         run: |
           set -euo pipefail
-          apk='app/build/outputs/apk/debug/app-debug.apk'
-          test -s "$apk"
-          unzip -tq "$apk" > /dev/null
-          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$apk" | grep "package: name='dev.lyonpro.tiktoklandscape'"
+          full='app/build/outputs/apk/debug/app-debug.apk'
+          lite='lite/build/outputs/apk/debug/lite-debug.apk'
+          for apk in "$full" "$lite"; do
+            test -s "$apk"
+            unzip -tq "$apk" >/dev/null
+          done
+          aapt="$ANDROID_HOME/build-tools/35.0.0/aapt"
+          "$aapt" dump badging "$full" | grep "package: name='dev.lyonpro.tiktoklandscape'"
+          "$aapt" dump badging "$lite" | grep "package: name='dev.lyonpro.tiktoklandscape.lite'"
+          # Compile-time assertion: the safe Lite build declares no AccessibilityService, SMS, or Internet access.
+          if "$aapt" dump xmltree "$lite" AndroidManifest.xml | grep -E 'BIND_ACCESSIBILITY_SERVICE|accessibilityservice|READ_SMS|RECEIVE_SMS|android.permission.INTERNET'; then
+            echo 'ERROR: Lite declares forbidden high-risk permission or Accessibility service.' >&2
+            exit 1
+          fi
           mkdir -p dist
-          cp "$apk" dist/TikTokLandscapeAssistant-v0.1.0-alpha.apk
-          (cd dist && sha256sum TikTokLandscapeAssistant-v0.1.0-alpha.apk > SHA256SUMS.txt)
+          cp "$full" dist/TikTokLandscapeAssistant-Full-v0.2.0-alpha.apk
+          cp "$lite" dist/LandscapeBrightnessLite-v0.2.0-alpha.apk
+          (cd dist && sha256sum *.apk > SHA256SUMS.txt)
           cat dist/SHA256SUMS.txt
       - name: Upload installable APK and checksum
         uses: actions/upload-artifact@v4
         with:
-          name: tiktok-landscape-assistant-debug-apk
+          name: landscape-assistant-full-and-lite-apks
           path: android/tiktok-landscape-assistant/dist/*
           if-no-files-found: error
           retention-days: 30
@@ -70,12 +81,12 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          tag="v0.1.0-alpha.${GITHUB_RUN_NUMBER}"
-          gh release create "$tag" dist/TikTokLandscapeAssistant-v0.1.0-alpha.apk dist/SHA256SUMS.txt \
+          tag="v0.2.0-alpha.${GITHUB_RUN_NUMBER}"
+          gh release create "$tag" dist/TikTokLandscapeAssistant-Full-v0.2.0-alpha.apk dist/LandscapeBrightnessLite-v0.2.0-alpha.apk dist/SHA256SUMS.txt \
             --target "$GITHUB_SHA" \
-            --title "TikTok Landscape Assistant $tag (Experimental)" \
+            --title "Landscape Assistant $tag (Security update, Experimental)" \
             --prerelease \
-            --notes "Personal experimental Android debug APK. Auto Next depends on TikTok exposing accessibility controls; correct episode order and last-episode detection are NOT verified. Accessibility and Modify system settings permissions are required. Portrait is intentionally untouched. No guarantee about TikTok third-party automation restrictions."
+            --notes "TWO DIFFERENT APPS: Lite only provides a user-triggered Quick Settings 100% brightness toggle, with no Accessibility/Auto Next/TikTok inspection. Full attempts TikTok landscape Auto Next using sensitive Accessibility; Google Play Protect may BLOCK sideloading it, especially in Vietnam. DO NOT disable Play Protect. Full now includes prominent disclosure, affirmative consent, and TikTok package scoping. Neither app has been tested on the user's device. Brightness Lite may still be scanned or warned about by the installer. A future Full distribution should pursue official Play Console review or Google Play Protect appeal; no protection bypass. The Full app does not guarantee correct Next Episode or stop at series end."
       - name: Publish exact-SHA result to GitHub Commit Status
         if: always()
         uses: actions/github-script@v7
