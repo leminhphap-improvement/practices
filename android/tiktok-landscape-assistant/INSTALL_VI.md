@@ -1,8 +1,15 @@
 # Cài đặt và sử dụng bản thử nghiệm Android
 
-> Trạng thái: **source alpha**, chưa có APK được build/kiểm thử trên điện thoại. Không nhầm ZIP source với file APK cài đặt.
+> Trạng thái: **APK alpha đã build qua GitHub Actions**; khả năng auto chuyển đúng tập trên TikTok thật **chưa được xác minh**. APK debug chỉ dành cho thử nghiệm cá nhân, không phải ứng dụng chính thức của TikTok.
 
-## A. Build một lần bằng Android Studio (máy tính)
+## A. Cài APK từ GitHub (khuyến nghị, không cần Android Studio)
+
+1. Vào **Releases** của repository → chọn **Pre-release** mới nhất `v0.1.0-alpha.N` nếu đã phát hành. Trong **Assets**, tải `TikTokLandscapeAssistant-v0.1.0-alpha.apk` và `SHA256SUMS.txt`. Không tải `Source code.zip` để cài.
+2. Nếu chưa thấy pre-release, mở **Actions → TikTok Landscape Android APK → một run Success đúng branch → Artifacts → tiktok-landscape-assistant-debug-apk**. Tải ZIP artifact và **giải nén để lấy APK**, không cài ZIP.
+3. Tùy chọn: đặt APK và `SHA256SUMS.txt` cạnh nhau trên máy tính, chạy `sha256sum -c SHA256SUMS.txt` để xác minh checksum.
+4. Mở APK trên Android, cấp **Install unknown apps** khi hệ thống yêu cầu rồi cài đặt. APK được ký bằng debug key của runner; bản build khác có thể có chữ ký khác nên cần gỡ bản cũ trước khi cài (thiết lập có thể bị xóa).
+
+## A2. Build bằng Android Studio (nếu muốn tự build)
 
 1. Tải source ZIP hoặc clone thư mục `android/tiktok-landscape-assistant` từ branch `feat/add-fullscreen-tiktok-auto-scroll-video`.
 2. Cài Android Studio, Android SDK Platform 35, SDK Build Tools và JDK 17. Mở **đúng thư mục** `tiktok-landscape-assistant` có file `settings.gradle`.
