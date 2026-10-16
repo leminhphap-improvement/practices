@@ -1,0 +1,3 @@
+<resources>
+    <string name="accessibility_description">Only when enabled and TikTok is in landscape, inspect visible player controls to detect loop and optionally tap next or swipe. No screen recording, overlay, or remote upload.</string>
+</resources>
