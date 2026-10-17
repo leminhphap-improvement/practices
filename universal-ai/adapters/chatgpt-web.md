@@ -1,0 +1,2 @@
+# ChatGPT Web adapter (manual/free-first)
+Copy only the task-specific intent and the relevant pack from catalog.json. When installed skill/connector access is available in this session, invoke it explicitly; otherwise rely on user-supplied text. Do not claim other conversations, tools or memory. Persist the `assistant-state.json` only in user-approved private storage. Never paste secrets. A single model running multiple role prompts is `SINGLE_SESSION_CROSSCHECK`, not an independent team.

@@ -1,0 +1,2 @@
+# Generic AI Web / Gemini manual adapter
+Transport a sanitized task JSON and checkpoint capsule. Re-check actual model and tool capabilities at the new destination; do not assume Gemini Developer API, Drive OAuth, Apps Script, web tab automation, or direct access to the prior ChatGPT chat. Copy only user-authorized task content; mark incoming results `USER_REPORTED` until actual provider traces and acceptance are verified.

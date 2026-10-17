@@ -1,0 +1,57 @@
+name: Universal AI Assistant — Portable Conformance
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'universal-ai/**'
+      - '.github/workflows/universal-ai-conformance.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  portable-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify exact checkout SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: Validate syntax and regression suite
+        run: |
+          python3 -m py_compile universal-ai/assistant.py
+          python3 -m unittest discover -s universal-ai/tests -v
+      - name: Exercise each surface-neutral example
+        run: |
+          python3 universal-ai/assistant.py route --task universal-ai/examples/short.json > /tmp/route.json
+          python3 universal-ai/assistant.py init --task universal-ai/examples/engineering.json --state /tmp/assistant-state.json > /tmp/init.json
+          python3 universal-ai/assistant.py resume --state /tmp/assistant-state.json > /tmp/resume.json
+          python3 - <<'PY'
+          import json
+          assert json.load(open('/tmp/route.json'))['mode'] == 'SHORT_CHAT'
+          assert json.load(open('/tmp/resume.json'))['state'] == 'INCOMPLETE'
+          PY
+      - name: Package reproducible portable starter
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,zipfile
+          root=Path('universal-ai')
+          with zipfile.ZipFile('/tmp/universal-ai-assistant-v0.1.zip','w',compression=zipfile.ZIP_DEFLATED) as z:
+              for file in sorted(root.rglob('*')):
+                  if not file.is_file() or '__pycache__' in file.parts:continue
+                  info=zipfile.ZipInfo(str(file).replace('\\','/'),date_time=(2020,1,1,0,0,0))
+                  info.compress_type=zipfile.ZIP_DEFLATED
+                  z.writestr(info,file.read_bytes())
+          digest=hashlib.sha256(Path('/tmp/universal-ai-assistant-v0.1.zip').read_bytes()).hexdigest()
+          Path('/tmp/universal-ai-assistant-v0.1.sha256').write_text(digest+'  universal-ai-assistant-v0.1.zip\n')
+          print('PACKAGE_SHA256='+digest)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: universal-ai-assistant-v0.1-${{ github.sha }}
+          path: |
+            /tmp/universal-ai-assistant-v0.1.zip
+            /tmp/universal-ai-assistant-v0.1.sha256
+          retention-days: 30
