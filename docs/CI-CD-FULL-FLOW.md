@@ -28,6 +28,14 @@ Run `python3 .cicd/verify.py` inside a checked-out repository. Its PASS_STATIC_O
 - Bootstrap is staged on an isolated automation branch and reviewed through a draft PR, not merged by setup.
 - If the proposal is rejected, close the draft PR and delete the branch; the original main remains intact.
 
+## Workflow availability and acceptance order
+
+GitHub workflow_dispatch workflows must exist on the repository default branch to be invoked normally. Since this workflow is intentionally manual-only, it cannot serve as a new PR pre-merge hosted check while it lives only on the proposal branch.
+
+Safe order: (1) peer-review the PR and run offline validation; (2) owner confirms quota restoration and permits controlled merge; (3) merge with exact target SHA recorded; (4) dispatch the now-default-branch manual workflow against the accepted main SHA; (5) inspect run/job and release/artifact evidence only when applicable; (6) mark original goal complete only with all applicable gates PASS.
+
+Before step 4 the CI gate remains NOT_RUN. Do not compensate by adding an automatic push/PR trigger while quota is suspended.
+
 ## Explicit manual prerequisites
 
 - Owner must explicitly approve restoring GitHub Actions quota before hosted runs.
