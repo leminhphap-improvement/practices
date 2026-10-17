@@ -1,0 +1,20 @@
+# CI_QUOTA_SUSPENDED: manual-only, do not dispatch without owner approval.
+name: CI/CD Full Flow — Manual Bootstrap Verification
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-bootstrap:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Assert checked-out SHA matches workflow SHA
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: Verify non-production public-safe bootstrap
+        run: python3 .cicd/verify.py
