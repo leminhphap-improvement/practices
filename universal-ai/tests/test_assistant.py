@@ -64,4 +64,18 @@ class PortableTests(unittest.TestCase):
             a.record(x,"AC-1","PASS",p)
             self.assertEqual(x["graph"]["current"],["AC-2"])
             self.assertEqual(a.summary(x)["missing_gates"],["AC-2"])
+
+    def test_learning_requires_failure_and_proof(self):
+        x=a.initial(task())
+        with tempfile.TemporaryDirectory() as d:
+            p=pathlib.Path(d)/"regression.txt";p.write_text("repro and corrected test")
+            with self.assertRaises(a.ContractError):a.propose_lesson(x,"AC-1","real bug",p)
+            a.record(x,"AC-1","FAIL")
+            a.propose_lesson(x,"AC-1","real bug",p)
+            self.assertEqual(x["lessons"][0]["status"],"CANDIDATE_NOT_ACCEPTED")
+            self.assertEqual(a.summary(x)["lesson_candidates"],1)
+    def test_all_six_product_packs_present(self):
+        for name in ("assistant-lite","learning-mentor","career","agent-team","engineering","integrations"):
+            self.assertTrue((ROOT/"packs"/(name+".md")).is_file(),name)
 if __name__=="__main__":unittest.main()
+

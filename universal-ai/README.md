@@ -36,7 +36,7 @@ The command `record --state FILE --gate AC-1 --status PASS --proof PROOF_FILE` s
 | Team | Issue-backed role/team handoff and bounded review contracts | no for manual |
 | Integrations | capability permissions + provider-neutral adapter boundary | requires external authorization for live execution |
 
-See `catalog.json`, `adapters/`, and `docs/acceptance.md`.
+See `catalog.json`, `packs/`, `adapters/`, and `docs/acceptance.md`. For instant chat use `adapters/CHAT-BOOTSTRAP.md`.
 
 ## Separation / compatibility
 This new public distribution has **no import or runtime dependency** on private `LyonPro/ai-workflow-oschestration` or `leminhphap-improvement/career-training-job` source. Those remain canonical *for their existing engineering products*. The current installed @CI/CD Full Flow 2.3 skill and ChatGPT Workflow plugin are separate host-side capabilities and must be invoked/installed explicitly.

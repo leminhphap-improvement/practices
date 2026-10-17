@@ -123,6 +123,23 @@ def record(state,gate,status,proof=None):
     state["checkpoint"]["next_action"]=remaining[0] if remaining else "request_user_acceptance"
     return state
 
+def propose_lesson(state,gate,cause,proof):
+    """Capture a proposed process fix after an observed failure, never auto-apply it."""
+    validate(state)
+    check_clean({"cause":cause})
+    if not isinstance(cause,str) or len(cause.strip())<5:raise ContractError("CAUSE_REQUIRED")
+    if not any(x.get("gate")==gate and x.get("status")=="FAIL" for x in state["graph"]["past"]):
+        raise ContractError("LESSON_REQUIRES_PRIOR_FAILURE")
+    path=Path(proof)
+    if not path.is_file() or not path.read_bytes():raise ContractError("REGRESSION_PROOF_REQUIRED")
+    identifier="LESSON-"+str(len(state["lessons"])+1)
+    state["lessons"].append({"id":identifier,"gate":gate,"cause":cause,
+        "regression_sha256":hashlib.sha256(path.read_bytes()).hexdigest(),
+        "status":"CANDIDATE_NOT_ACCEPTED","independent_review":"NOT_VERIFIED","at":now()})
+    state["graph"]["edges"].append({"from":gate,"to":identifier,"type":"PROPOSED_IMPROVEMENT"})
+    state["updated_at"]=now()
+    return state
+
 def summary(state):
     validate(state)
     missing=[x["id"] for x in state["acceptance"] if x["status"] not in ("PASS","NOT_APPLICABLE")]
@@ -130,7 +147,7 @@ def summary(state):
     return {"state":"READY_FOR_INDEPENDENT_ACCEPTANCE" if all_local else "INCOMPLETE",
             "completed_gate_count":sum(1 for x in state["acceptance"] if x["status"]=="PASS"),
             "total_gates":len(state["acceptance"]),"next_action":state["checkpoint"]["next_action"],
-            "missing_gates":missing,"runtime":"NO_AUTONOMOUS_EXECUTION",
+            "missing_gates":missing,"lesson_candidates":len(state["lessons"]),"runtime":"NO_AUTONOMOUS_EXECUTION",
             "product_acceptance":"NOT_VERIFIED","checkpoint_source":"LOCAL_FILE"}
 
 def main(argv=None):
@@ -143,6 +160,9 @@ def main(argv=None):
     s=sub.add_parser("record");s.add_argument("--state",required=True)
     s.add_argument("--gate",required=True);s.add_argument("--status",required=True)
     s.add_argument("--proof")
+    s=sub.add_parser("lesson");s.add_argument("--state",required=True)
+    s.add_argument("--gate",required=True);s.add_argument("--cause",required=True)
+    s.add_argument("--proof",required=True)
     args=p.parse_args(argv)
     try:
         if args.command=="route":out=choose(load_json(args.task))
@@ -152,6 +172,8 @@ def main(argv=None):
             state=validate(load_json(args.state))
             if args.command=="record":
                 record(state,args.gate,args.status,args.proof);atomic_save(args.state,state)
+            if args.command=="lesson":
+                propose_lesson(state,args.gate,args.cause,args.proof);atomic_save(args.state,state)
             out=summary(state)
     except (ContractError,ValueError,KeyError,OSError) as e:
         p.exit(2,"CONTRACT_ERROR: "+str(e)+"\n")
