@@ -23,5 +23,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: python3 .cicd/org_quota.py --org leminhphap-improvement --repo practices --require-available
+      - name: Run org quota regression tests
+        run: python3 -m unittest discover -s tests -v
       - name: Verify non-production public-safe bootstrap
         run: python3 .cicd/verify.py
