@@ -1,0 +1,13 @@
+{
+  "kind": "engineering",
+  "goal": "Implement one bounded feature and validate outcomes",
+  "impact": "high",
+  "acceptance": [
+    "Implement feature",
+    "Unit tests pass",
+    "Human accepts behavior"
+  ],
+  "capabilities": [
+    "git-read"
+  ]
+}

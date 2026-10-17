@@ -1,0 +1,9 @@
+{
+  "kind": "short_chat",
+  "goal": "Explain the concept clearly in one paragraph",
+  "impact": "low",
+  "acceptance": [
+    "Answer the question"
+  ],
+  "capabilities": []
+}

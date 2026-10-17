@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "description": "Public-neutral pack bindings; not models/agents or proof of expert credentials",
+  "packs": {
+    "short_chat": {
+      "mode": "SHORT_CHAT",
+      "accountable": "assistant",
+      "reviewers": [],
+      "skills": [
+        "direct_answer",
+        "calibrated_uncertainty"
+      ]
+    },
+    "learning": {
+      "mode": "MENTOR",
+      "accountable": "mentor",
+      "reviewers": [
+        "learning_experience_designer"
+      ],
+      "skills": [
+        "adaptive_teaching",
+        "retrieval_practice",
+        "learner_attempt"
+      ]
+    },
+    "career": {
+      "mode": "CAREER",
+      "accountable": "interview_trainer",
+      "reviewers": [
+        "domain_specialist",
+        "qa_lead"
+      ],
+      "skills": [
+        "jd_cv_truth_check",
+        "rehearsal",
+        "feedback"
+      ]
+    },
+    "work": {
+      "mode": "WORK",
+      "accountable": "product_manager",
+      "reviewers": [
+        "business_analyst",
+        "qa_lead"
+      ],
+      "skills": [
+        "scoping",
+        "decision_log",
+        "handoff"
+      ]
+    },
+    "engineering": {
+      "mode": "ENGINEERING",
+      "accountable": "tech_lead",
+      "reviewers": [
+        "domain_engineer",
+        "qa_lead"
+      ],
+      "skills": [
+        "goal_convergence",
+        "root_cause",
+        "exact_sha_evidence"
+      ]
+    },
+    "research": {
+      "mode": "RESEARCH",
+      "accountable": "researcher",
+      "reviewers": [
+        "fact_checker"
+      ],
+      "skills": [
+        "source_verification",
+        "counter_evidence"
+      ]
+    },
+    "team": {
+      "mode": "TEAM",
+      "accountable": "product_manager",
+      "reviewers": [
+        "business_analyst",
+        "tech_lead",
+        "qa_lead"
+      ],
+      "skills": [
+        "scope_contract",
+        "bidirectional_dissent",
+        "typed_handoff",
+        "independent_review_gate"
+      ]
+    },
+    "integrations": {
+      "mode": "INTEGRATIONS",
+      "accountable": "integration_engineer",
+      "reviewers": [
+        "security_reviewer",
+        "qa_lead"
+      ],
+      "skills": [
+        "permission_scoping",
+        "capability_detection",
+        "idempotent_handoff",
+        "adapter_health"
+      ]
+    }
+  }
+}
