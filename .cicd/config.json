@@ -6,7 +6,7 @@
   "intent": "non-production DevOps trial; do not infer production deployment",
   "runtime": "ChatGPT plugin when explicitly invoked; not a persistent runner",
   "organization_scope": "per-repository opt-in; not an organization-wide plugin install",
-  "action_policy": "CI_QUOTA_SUSPENDED",
+  "action_policy": "ORG_SCOPED_PREFLIGHT",
   "workflow_path": ".github/workflows/ci-cd-full-flow-manual.yml",
   "authority": {
     "goal": "original user request",
@@ -54,6 +54,15 @@
     "protect_credentials": true,
     "no_automatic_actions": true,
     "no_background_execution_claim": true,
-    "manual_ci_resume_requires_owner_approval": true
+    "manual_ci_resume_requires_owner_approval": false
+  },
+  "quota_preflight": {
+    "policy": ".cicd/org-quota-policy.json",
+    "tool": ".cicd/org_quota.py",
+    "owner_reported_state": "AVAILABLE",
+    "reported_at": "2026-10-17",
+    "evidence": "USER_CONFIRMED",
+    "api_probe": "READ_ONLY",
+    "no_implicit_code_relocation": true
   }
 }

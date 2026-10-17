@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "organizations": {
+    "leminhphap-improvement": {
+      "status": "AVAILABLE",
+      "evidence": "USER_CONFIRMED",
+      "reported_at": "2026-10-17",
+      "note": "API-verified remaining minutes not established. Check target org with read-only API before dispatch."
+    }
+  }
+}

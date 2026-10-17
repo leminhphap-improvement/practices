@@ -20,7 +20,10 @@ def git(*args):
 def main():
     check(CONFIG["schema_version"] == 1, "schema_version")
     check(CONFIG["contract"] == "CI/CD Full Flow 2.3", "contract")
-    check(CONFIG["action_policy"] == "CI_QUOTA_SUSPENDED", "quota state")
+    check(CONFIG["action_policy"] == "ORG_SCOPED_PREFLIGHT", "org-aware quota policy")
+    quota=json.loads((ROOT / ".cicd/org-quota-policy.json").read_text(encoding="utf-8"))
+    check(quota["organizations"]["leminhphap-improvement"]["evidence"] == "USER_CONFIRMED", "quota evidence")
+    check((ROOT / ".cicd/org_quota.py").is_file(), "quota preflight missing")
     check(CONFIG["policies"]["no_automatic_actions"], "automatic actions forbidden")
     check(CONFIG["policies"]["strict_sha"], "exact SHA")
     check("workflow_dispatch:" in WORKFLOW, "manual trigger missing")
