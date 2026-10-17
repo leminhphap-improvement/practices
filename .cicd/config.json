@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "setup_id": "cicd-full-flow-org-bootstrap-2026-10-17",
+  "contract": "CI/CD Full Flow 2.3",
+  "repository": "leminhphap-improvement/practices",
+  "intent": "non-production DevOps trial; do not infer production deployment",
+  "runtime": "ChatGPT plugin when explicitly invoked; not a persistent runner",
+  "organization_scope": "per-repository opt-in; not an organization-wide plugin install",
+  "action_policy": "ORG_SCOPED_PREFLIGHT",
+  "workflow_path": ".github/workflows/ci-cd-full-flow-manual.yml",
+  "authority": {
+    "goal": "original user request",
+    "code": "repository exact ref/SHA",
+    "state": "authorized external checkpoint or explicit unsaved handoff"
+  },
+  "task_contract": [
+    "GOAL_ID",
+    "REPOSITORY",
+    "SOURCE_REF",
+    "SOURCE_SHA",
+    "USER_GOAL",
+    "ACCEPTANCE",
+    "WORK_REF",
+    "NEXT_ACTION"
+  ],
+  "gate_statuses": [
+    "PENDING",
+    "PASS",
+    "FAIL",
+    "UNKNOWN",
+    "NOT_APPLICABLE"
+  ],
+  "required_gate_registry": [
+    "SOURCE_IDENTITY",
+    "REPOSITORY_STATE",
+    "IMPLEMENTATION",
+    "STATIC_ANALYSIS",
+    "UNIT_TESTS",
+    "INTEGRATION_TESTS",
+    "CREDENTIAL_BOUNDARY",
+    "CI_EXACT_SHA",
+    "BUILD",
+    "PACKAGE",
+    "ARTIFACT",
+    "RELEASE",
+    "RELEASE_TARGET_SHA",
+    "INTEGRITY",
+    "ORIGINAL_USER_GOAL"
+  ],
+  "policies": {
+    "applicability": "explicit task-scope decision; do not silently waive applicable gate",
+    "no_unverified_success": true,
+    "strict_sha": true,
+    "protect_credentials": true,
+    "no_automatic_actions": false,
+    "no_background_execution_claim": true,
+    "manual_ci_resume_requires_owner_approval": false,
+    "auto_ci_main_only_when_org_available": true
+  },
+  "quota_preflight": {
+    "policy": ".cicd/org-quota-policy.json",
+    "tool": ".cicd/org_quota.py",
+    "owner_reported_state": "AVAILABLE",
+    "reported_at": "2026-10-17",
+    "evidence": "USER_CONFIRMED",
+    "api_probe": "READ_ONLY",
+    "no_implicit_code_relocation": true
+  }
+}

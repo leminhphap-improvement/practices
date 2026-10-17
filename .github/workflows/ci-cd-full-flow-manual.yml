@@ -1,0 +1,27 @@
+# Org-scoped CI only on main and manual dispatch. LyonPro suspension must not propagate.
+name: CI/CD Full Flow — Org-Scoped Quota Preflight
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-bootstrap:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Assert checked-out SHA matches workflow SHA
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: Org-aware quota and repository preflight (read-only)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 .cicd/org_quota.py --org leminhphap-improvement --repo practices --require-available
+      - name: Verify non-production public-safe bootstrap
+        run: python3 .cicd/verify.py
