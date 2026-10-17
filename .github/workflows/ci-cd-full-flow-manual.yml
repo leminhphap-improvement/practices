@@ -1,6 +1,9 @@
-# Per-org manual-only workflow. Owner reports this org available; no cross-org quota inheritance.
-name: CI/CD Full Flow — Manual Bootstrap Verification
+# Org-scoped CI only on main and manual dispatch. LyonPro suspension must not propagate.
+name: CI/CD Full Flow — Org-Scoped Quota Preflight
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
 permissions:
   contents: read

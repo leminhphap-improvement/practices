@@ -52,9 +52,10 @@
     "no_unverified_success": true,
     "strict_sha": true,
     "protect_credentials": true,
-    "no_automatic_actions": true,
+    "no_automatic_actions": false,
     "no_background_execution_claim": true,
-    "manual_ci_resume_requires_owner_approval": false
+    "manual_ci_resume_requires_owner_approval": false,
+    "auto_ci_main_only_when_org_available": true
   },
   "quota_preflight": {
     "policy": ".cicd/org-quota-policy.json",

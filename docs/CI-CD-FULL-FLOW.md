@@ -5,7 +5,7 @@
 - This is an opt-in repo-local setup for the already installed @CI/CD Full Flow 2.3 skill in the invoking ChatGPT account, not an installed organization-wide service.
 - Do not mistake this public trial repository for the private core or copy private role registry/source into it.
 - Protected engineering repository implementations in the same organization are separately version-pinned; audit them independently rather than duplicating source here.
-- Quota is scoped to the BILLING OWNER / organization. Per user confirmation (2026-10-17), LyonPro is exhausted but leminhphap-improvement is available; do not carry the LyonPro suspension into this repo. This workflow remains manual-only. A user report is not an API-verified remaining balance.
+- Quota is scoped to the BILLING OWNER / organization. Per user confirmation (2026-10-17), LyonPro is exhausted but leminhphap-improvement is available; do not carry the LyonPro suspension into this repo. The workflow runs only after a push to main (or explicit manual dispatch); not on arbitrary branches. A user report is not an API-verified remaining balance.
 
 ## Bounded execution per goal
 
@@ -30,11 +30,11 @@ Run `python3 .cicd/verify.py` inside a checked-out repository. Its PASS_STATIC_O
 
 ## Workflow availability and acceptance order
 
-GitHub workflow_dispatch workflows must exist on the repository default branch to be invoked normally. Since this workflow is intentionally manual-only, it cannot serve as a new PR pre-merge hosted check while it lives only on the proposal branch.
+The workflow uses a main-only push trigger plus an optional manual trigger. It runs automatically after a controlled merge into main in this owner-confirmed available organization. A workflow cannot use its own job to preflight quota BEFORE GitHub allocates a runner; the read-only preflight is also required at the ChatGPT/CLI orchestration layer before push/dispatch.
 
-Safe order: (1) peer-review the PR and run offline tests; (2) merge to this available org's default branch with exact SHA recorded when authorized; (3) run read-only per-org preflight (including Actions policy, budgets and usage when permitted); (4) dispatch the manual workflow on that exact SHA; (5) inspect run/job evidence and relevant release/artifact gates; (6) mark original goal complete only with all applicable gates PASS.
+Safe order: (1) verify org-specific owner evidence and attempt read-only API preflight outside the runner; (2) review PR and offline tests; (3) merge to this available org's main branch; (4) main-only push starts CI and repeats the read-only preflight in the job; (5) inspect exact-SHA job evidence and applicable artifact gates; (6) mark original goal complete only with all applicable gates PASS. Manual dispatch remains optional.
 
-Before an actual successful CI run the CI gate remains NOT_RUN. Even a preflight PASS does not prove remaining quota or successful runner allocation. Do not add automatic triggers merely to probe quota.
+Before an actual successful CI run the CI gate remains NOT_RUN. Even a preflight PASS does not prove remaining quota or successful runner allocation. Automatic main-only trigger is enabled only for the owner-confirmed available organization. Never use a job dispatch solely as a quota probe.
 
 ## Explicit manual prerequisites
 

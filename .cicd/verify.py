@@ -24,10 +24,11 @@ def main():
     quota=json.loads((ROOT / ".cicd/org-quota-policy.json").read_text(encoding="utf-8"))
     check(quota["organizations"]["leminhphap-improvement"]["evidence"] == "USER_CONFIRMED", "quota evidence")
     check((ROOT / ".cicd/org_quota.py").is_file(), "quota preflight missing")
-    check(CONFIG["policies"]["no_automatic_actions"], "automatic actions forbidden")
+    check(CONFIG["policies"]["auto_ci_main_only_when_org_available"], "expected main-only CI")
     check(CONFIG["policies"]["strict_sha"], "exact SHA")
     check("workflow_dispatch:" in WORKFLOW, "manual trigger missing")
-    for blocked in ("push:", "pull_request:", "schedule:", "workflow_run:"):
+    check("  push:\n    branches:\n      - main" in WORKFLOW, "main-only push trigger missing")
+    for blocked in ("pull_request:", "schedule:", "workflow_run:"):
         check(not any(line.lstrip().startswith(blocked) for line in WORKFLOW.splitlines()), "unsafe trigger: " + blocked)
     check("contents: read" in WORKFLOW, "least privileged content scope")
     check("ORIGINAL_USER_GOAL" in CONFIG["required_gate_registry"], "goal gate missing")
