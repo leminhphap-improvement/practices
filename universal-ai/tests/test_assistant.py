@@ -51,7 +51,17 @@ class PortableTests(unittest.TestCase):
     def test_reject_role_fake_invocation(self):
         x=a.initial(task());x["route"]["agent_invocations"]="COMPLETE"
         with self.assertRaises(a.ContractError):a.summary(x)
-    def test_nonapplicable_is_not_unverified_pass(self):
-        x=a.initial(task());a.record(x,"AC-1","NOT_APPLICABLE")
-        self.assertEqual(a.summary(x)["state"],"INCOMPLETE")
+    def test_original_acceptance_cannot_be_waived(self):
+        x=a.initial(task())
+        with self.assertRaises(a.ContractError):a.record(x,"AC-1","NOT_APPLICABLE")
+    def test_team_and_integrations_selectable(self):
+        self.assertIn("qa_lead",a.choose(task("team","high"))["roles"])
+        self.assertIn("security_reviewer",a.choose(task("integrations","high"))["roles"])
+    def test_graph_updates_missing_edges(self):
+        x=a.initial(task())
+        with tempfile.TemporaryDirectory() as d:
+            p=pathlib.Path(d)/"proof.txt";p.write_text("local evidence")
+            a.record(x,"AC-1","PASS",p)
+            self.assertEqual(x["graph"]["current"],["AC-2"])
+            self.assertEqual(a.summary(x)["missing_gates"],["AC-2"])
 if __name__=="__main__":unittest.main()

@@ -8,7 +8,7 @@ This is a **new independently-authored public starter** for the user-defined Uni
 - **Harness:** explicit permitted capabilities, local checkpoint, no assumed OAuth/CI/runners.
 - **Graph:** past/current/future plus goal-to-acceptance edges and evidence history.
 - **Agent Team:** roles are bounded occupational *contracts*; not automatically invoked independent agents.
-- **Packs:** short chat, learning, career, work, engineering, research. Products are installable/explainable separately; users need only one.
+- **Packs:** short chat, learning, career, work, engineering, research, agent team, integrations. Products are installable/explainable separately; users need only one.
 
 ## Try it (zero dependencies; Python >=3.10)
 
@@ -31,6 +31,10 @@ The command `record --state FILE --gate AC-1 --status PASS --proof PROOF_FILE` s
 | Work | PM/BA scoping and decisions | no for manual |
 | Engineering | goal -> code/test/evidence handoff | tools only when authorized |
 | Research | verify facts and contrary evidence | web only when available |
+
+
+| Team | Issue-backed role/team handoff and bounded review contracts | no for manual |
+| Integrations | capability permissions + provider-neutral adapter boundary | requires external authorization for live execution |
 
 See `catalog.json`, `adapters/`, and `docs/acceptance.md`.
 

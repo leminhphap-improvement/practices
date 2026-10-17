@@ -9,7 +9,7 @@ import tempfile
 from datetime import datetime, timezone
 
 ROOT=Path(__file__).resolve().parent
-KINDS={"short_chat","learning","career","work","engineering","research"}
+KINDS={"short_chat","learning","career","work","engineering","research","team","integrations"}
 EVIDENCE={"UNKNOWN","USER_REPORTED","LOCAL_FILE","PROVIDER_TRACE","REAL_BROWSER","USER_ACCEPTED"}
 STATES={"PENDING","PASS","FAIL","UNKNOWN","NOT_APPLICABLE"}
 FORBIDDEN_KEYS={"api_key","access_token","refresh_token","password","secret","private_key","raw_transcript","cookie","credential"}
@@ -47,7 +47,7 @@ def choose(task):
         raise ContractError("INVALID_CAPABILITIES")
     defined=catalog()["packs"][kind]
     selected_roles=[defined["accountable"]]
-    if impact=="high" and kind in ("work","career","engineering"):
+    if impact=="high" and kind in ("work","career","engineering","team","integrations"):
         selected_roles+=defined["reviewers"]
     selected_roles=list(dict.fromkeys(selected_roles))
     return {"mode":defined["mode"],"pack":kind,"effort":"minimal" if impact=="low" else "bounded" if impact=="medium" else "evidence_intensive",
@@ -100,6 +100,7 @@ def validate(state):
 def record(state,gate,status,proof=None):
     validate(state)
     if status not in ("PASS","FAIL","UNKNOWN","NOT_APPLICABLE"):raise ContractError("INVALID_STATUS")
+    if status=="NOT_APPLICABLE":raise ContractError("ORIGINAL_CRITERION_CANNOT_BE_WAIVED")
     found=next((x for x in state["acceptance"] if x["id"]==gate),None)
     if found is None: raise ContractError("UNKNOWN_ACCEPTANCE_GATE")
     if status=="PASS":
@@ -115,15 +116,17 @@ def record(state,gate,status,proof=None):
         found["evidence"].append({"class":"USER_REPORTED","recorded_at":now(),"limitation":"NOT_INDEPENDENTLY_VERIFIED"})
     found["status"]=status
     state["graph"]["past"].append({"gate":gate,"status":status,"at":now()})
-    state["graph"]["current"]=["first_unmet_criterion"]
+    remaining=[x["id"] for x in state["acceptance"] if x["status"]!="PASS"]
+    state["graph"]["current"]=[remaining[0]] if remaining else ["independent_acceptance_pending"]
+    state["graph"]["future"]=remaining[1:] if remaining else ["independent_acceptance"]
     state["updated_at"]=now()
-    state["checkpoint"]["next_action"]=next((x["id"] for x in state["acceptance"] if x["status"] not in ("PASS","NOT_APPLICABLE")),"request_user_acceptance")
+    state["checkpoint"]["next_action"]=remaining[0] if remaining else "request_user_acceptance"
     return state
 
 def summary(state):
     validate(state)
     missing=[x["id"] for x in state["acceptance"] if x["status"] not in ("PASS","NOT_APPLICABLE")]
-    all_local=not missing
+    all_local=not missing and bool(state["acceptance"])
     return {"state":"READY_FOR_INDEPENDENT_ACCEPTANCE" if all_local else "INCOMPLETE",
             "completed_gate_count":sum(1 for x in state["acceptance"] if x["status"]=="PASS"),
             "total_gates":len(state["acceptance"]),"next_action":state["checkpoint"]["next_action"],

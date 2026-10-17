@@ -72,6 +72,35 @@
         "source_verification",
         "counter_evidence"
       ]
+    },
+    "team": {
+      "mode": "TEAM",
+      "accountable": "product_manager",
+      "reviewers": [
+        "business_analyst",
+        "tech_lead",
+        "qa_lead"
+      ],
+      "skills": [
+        "scope_contract",
+        "bidirectional_dissent",
+        "typed_handoff",
+        "independent_review_gate"
+      ]
+    },
+    "integrations": {
+      "mode": "INTEGRATIONS",
+      "accountable": "integration_engineer",
+      "reviewers": [
+        "security_reviewer",
+        "qa_lead"
+      ],
+      "skills": [
+        "permission_scoping",
+        "capability_detection",
+        "idempotent_handoff",
+        "adapter_health"
+      ]
     }
   }
 }

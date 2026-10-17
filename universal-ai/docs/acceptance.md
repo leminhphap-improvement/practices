@@ -8,7 +8,7 @@ Make a portable, safe, minimal, extensible Universal AI Assistant architecture w
 2. **GOAL/LOOP:** exactly preserved original goal; versioned acceptance; unresolved criteria remain visible; no self-certification.
 3. **HARNESS:** no tool calls without explicit capabilities; no credentials/API keys baked into config; checkpoint persists through interruption.
 4. **GRAPH:** past/current/future and goal-to-acceptance edges, observed evidence and explicit gaps; lessons can be proposed but not automatically applied.
-5. **PACKS:** user-selectable chat/learning/career/work/engineering/research with a common contract.
+5. **PACKS:** user-selectable chat/learning/career/work/engineering/research/team/integrations with a common contract.
 6. **ADAPTERS:** ChatGPT Web, generic AI web and CLI can accept the same structured task and manual checkpoint; live agent/OAuth/provider execution not claimed.
 7. **SECURITY:** reject sensitive-key fields and fabricated independent invocations; owner scopes CI quota and credential boundary.
 8. **CI:** unittest suite and provenance checks PASS on exact SHA of work; no claim of user-level or integration E2E from CI alone.
