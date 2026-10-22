@@ -25,5 +25,9 @@ jobs:
         run: python3 .cicd/org_quota.py --org leminhphap-improvement --repo practices --require-available
       - name: Run org quota regression tests
         run: python3 -m unittest discover -s tests -v
+      - name: Run portable Universal AI starter tests
+        run: python3 -m unittest discover -s universal-ai/tests -v
+      - name: Verify Project Instructions limit
+        run: python3 -c "from pathlib import Path; p=Path('universal-ai/PROJECT-INTRO-TEMPLATE.md'); assert len(p.read_text(encoding='utf-8')) < 8000"
       - name: Verify non-production public-safe bootstrap
         run: python3 .cicd/verify.py

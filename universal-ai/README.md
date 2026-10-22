@@ -2,6 +2,12 @@
 
 This is a **new independently-authored public starter** for the user-defined Universal AI Assistant vision. It does **not** duplicate private LyonPro orchestration code, impersonate the installed ChatGPT plugins, or claim live cross-model agent execution.
 
+## New project / blank workspace
+
+Start with **ONBOARDING.md**. It uses one-question-at-a-time intake, confirms a goal charter, and drafts **PROJECT-INTRO-TEMPLATE.md** under 8,000 characters before the detailed workflow is customized.
+
+The portable contract is **AI-ARCHITECTURE-WORKFLOW.md**. Reusable plugin strengths and optional adapter boundaries are mapped in **docs/PLUGIN-CAPABILITY-MAP.md**.
+
 ## Architecture
 - **Prompt:** task-sized routing, explicit mode/role/skill contracts.
 - **Loop:** acceptance criteria, minimal unmet next action, no fabricated completion.
