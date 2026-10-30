@@ -10,7 +10,6 @@ on:
     paths:
       - 'universal-ai/**'
       - '.github/workflows/universal-ai-conformance.yml'
-  workflow_dispatch:
 permissions:
   contents: read
 jobs:
